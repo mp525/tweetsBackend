@@ -7,6 +7,8 @@ var url = "mongodb://localhost:27017/";
 
 /* GET all tweets. */
 router.get('/', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
   var result1;
   MongoClient.connect(url, async function (err, db) {
     if (err) throw err;
@@ -21,6 +23,8 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
   MongoClient.connect(url, async function (err, db) {
     if (err) throw err;
     var dbo = db.db("Test");
