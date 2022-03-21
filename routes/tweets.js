@@ -22,6 +22,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
 router.post('/', function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -37,5 +38,28 @@ router.post('/', function (req, res, next) {
   });
   res.send("1 document inserted");
 }); 
+
+/* GET top 10 hashtags. */
+router.get('/hashtags', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  var result1;
+  MongoClient.connect(url, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("Test");
+    result1 = await dbo.collection("tweets").aggregate([
+      {$match: {}},
+      {$unwind: "$entities.hashtags"},
+      {$group: {_id: "$entities.hashtags.text", count: {$count: {}}}},
+      {$sort: {count: -1}},
+      {$limit: 10},
+    ]).toArray(function (err, result) {
+      if (err) throw err;
+      result1 = result;
+      res.send(result);
+      db.close();
+    });
+  });
+});
 
 module.exports = router;
