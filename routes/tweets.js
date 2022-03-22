@@ -4,8 +4,7 @@ var router = express.Router();
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
 const bodyParser = require("body-parser");
-const app = express();
-app.use(bodyParser.json());
+var cors = require("cors");
 
 /* GET all tweets. */
 router.get("/", function (req, res, next) {
@@ -30,7 +29,10 @@ router.get("/", function (req, res, next) {
 router.post("/", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers: Origin, Content-Type, application/json"
+  );
   MongoClient.connect(url, async function (err, db) {
     console.log("BODY");
     console.log(req.body);
