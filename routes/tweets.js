@@ -2,7 +2,7 @@ var express = require("express");
 const app = require("../app");
 var router = express.Router();
 var MongoClient = require("mongodb").MongoClient;
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://localhost:27020/";
 const bodyParser = require("body-parser");
 var cors = require("cors");
 
@@ -13,9 +13,9 @@ router.get("/", function (req, res, next) {
   var result1;
   MongoClient.connect(url, async function (err, db) {
     if (err) throw err;
-    var dbo = db.db("Test");
+    var dbo = db.db("tweets");
     result1 = await dbo
-      .collection("tweets")
+      .collection("tweet")
       .find({})
       .toArray(function (err, result) {
         if (err) throw err;
@@ -26,22 +26,23 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.post("/", function (req, res, next) {
+router.post("/", async function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
-    "Access-Control-Allow-Headers: Origin, Content-Type, application/json"
+    "Access-Control-Allow-Headers: Origin, Content-Type: application/json"
   );
+  console.log("BODY");
+  console.log(req.body);
   MongoClient.connect(url, async function (err, db) {
-    console.log("BODY");
-    console.log(req.body);
+
     if (err) throw err;
 
-    var dbo = db.db("Test");
+    var dbo = db.db("tweets");
     var obj = req.body;
     result1 = await dbo
-      .collection("tweets")
+      .collection("tweet")
       .insertOne(obj, function (err, res) {
         if (err) throw err;
         console.log("1 document inserted");
@@ -58,9 +59,9 @@ router.get("/hashtags", function (req, res, next) {
   var result1;
   MongoClient.connect(url, async function (err, db) {
     if (err) throw err;
-    var dbo = db.db("Test");
+    var dbo = db.db("tweets");
     result1 = await dbo
-      .collection("tweets")
+      .collection("tweet")
       .aggregate([
         { $match: {} },
         { $unwind: "$entities.hashtags" },
